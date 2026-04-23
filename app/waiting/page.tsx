@@ -1,11 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function WaitingPage() {
-  const searchParams = useSearchParams();
-  const name = searchParams.get("name") || "Unknown student";
+  const [name, setName] = useState("Unknown student");
+
+  useEffect(() => {
+    const savedName = localStorage.getItem("selectedStudentName");
+    if (savedName) {
+      setName(savedName);
+    }
+  }, []);
 
   return (
     <main className="page-shell">
