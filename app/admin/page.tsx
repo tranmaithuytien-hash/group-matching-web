@@ -1,13 +1,40 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { doc, onSnapshot, serverTimestamp, setDoc } from "firebase/firestore";
+import { db } from "../../lib/firebase";
 
 export default function AdminPage() {
   const [roundStatus, setRoundStatus] = useState("Not started");
 
-  const handleStartRound1 = () => {
-    setRoundStatus("Round 1 has started");
+  useEffect(() => {
+    const unsubscribe = onSnapshot(doc(db, "app_state", "current"), (snapshot) => {
+      if (!snapshot.exists()) {
+        return;
+      }
+
+      const data = snapshot.data() as {
+        waitingMessage?: string;
+      };
+
+      setRoundStatus(data.waitingMessage || "Not started");
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const handleStartRound1 = async () => {
+    await setDoc(
+      doc(db, "app_state", "current"),
+      {
+        currentRound: "round1",
+        round1Status: "open",
+        waitingMessage: "Round 1 has started",
+        updatedAt: serverTimestamp()
+      },
+      { merge: true }
+    );
   };
 
   return (
@@ -16,8 +43,7 @@ export default function AdminPage() {
         <span className="eyebrow">Admin screen</span>
         <h1>Admin Panel</h1>
         <p className="lead">
-          This is a fake admin page for Stage 2. Firebase and realtime features
-          will be added later.
+          This page now updates Firebase, and students will see the new status in realtime.
         </p>
 
         <div className="status-box">
