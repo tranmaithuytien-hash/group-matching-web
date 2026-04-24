@@ -257,8 +257,11 @@ export default function HomePage() {
                       : "Đăng nhập Giảng viên"}
                   </button>
 
-                  <button className="primary-button" onClick={handleTeacherGoogleAuth}>
-                    Đăng nhập bằng Google
+                  <button className="google-auth-button" onClick={handleTeacherGoogleAuth}>
+                    <span className="google-auth-logo" aria-hidden="true">
+                      G
+                    </span>
+                    <span>Sign in with Google</span>
                   </button>
                 </div>
 

@@ -218,7 +218,12 @@ export default function ClassLoginPage() {
       <section className="card card-wide">
         <span className="eyebrow">Lối vào Sinh viên</span>
         <h1>{className || "Đang tải lớp..."}</h1>
-        <p className="lead">Sinh viên chỉ đăng nhập được với đúng danh sách của lớp này.</p>
+        <p className="lead">
+          Vui lòng chọn đúng tên SV để thực hiện đăng nhập.
+          <br />
+          Với lần đăng nhập đầu tiên, bạn sẽ cần tạo mật khẩu. Mật khẩu này không cần quá
+          phức tạp, chỉ cần đủ để xác minh đó là bạn.
+        </p>
 
         <div className="status-box">
           <p className="status-label">Link lớp hiện tại</p>
