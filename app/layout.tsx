@@ -3,8 +3,9 @@ import type { ReactNode } from "react";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Group Matching App",
-  description: "Stage 2 starter for the Group Matching App"
+  title: "MarveClass | Hệ thống quản lý lớp học & Gamification",
+  description:
+    "Nền tảng quản lý lớp học thông minh tích hợp các trò chơi tương tác sinh động. Giúp GV kết nối với người học, tạo động lực học tập và xây dựng những lớp học \"marvelous\" đúng nghĩa."
 };
 
 export default function RootLayout({
