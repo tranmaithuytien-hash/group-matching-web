@@ -251,17 +251,34 @@ export default function HomePage() {
                 ) : null}
 
                 <div className="button-stack">
-                  <button className="secondary-button" onClick={handleTeacherAuth}>
+                  <button className="teacher-submit-button" onClick={handleTeacherAuth}>
                     {teacherMode === "register"
                       ? "Tạo tài khoản Giảng viên"
-                      : "Đăng nhập Giảng viên"}
+                      : "Đăng nhập"}
                   </button>
 
-                  <button className="google-auth-button" onClick={handleTeacherGoogleAuth}>
-                    <span className="google-auth-logo" aria-hidden="true">
-                      G
-                    </span>
-                    <span>Sign in with Google</span>
+                  <p className="teacher-switch-text">
+                    {teacherMode === "register" ? "Đã có tài khoản?" : "Chưa có tài khoản?"}{" "}
+                    <button
+                      type="button"
+                      className="teacher-inline-link"
+                      onClick={() => {
+                        setTeacherMode(teacherMode === "register" ? "login" : "register");
+                        setTeacherMessage("");
+                      }}
+                    >
+                      {teacherMode === "register" ? "Đăng nhập" : "Tạo tài khoản"}
+                    </button>
+                  </p>
+
+                  <div className="teacher-auth-divider">
+                    <span />
+                    <strong>OR</strong>
+                    <span />
+                  </div>
+
+                  <button className="google-auth-image-button" onClick={handleTeacherGoogleAuth}>
+                    <img src="/google-signin-button.png" alt="Sign in with Google" />
                   </button>
                 </div>
 
