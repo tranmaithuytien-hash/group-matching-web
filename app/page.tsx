@@ -2,121 +2,271 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { collection, onSnapshot } from "firebase/firestore";
-import { db } from "../lib/firebase";
+import {
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  type User
+} from "firebase/auth";
+import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
+import { auth, db } from "../lib/firebase";
+import { activeClassIdKey, classDocRef } from "../lib/classHelpers";
 
-type Participant = {
-  docId: string;
-  studentId: string;
-  fullName: string;
-  ranking: number;
-};
-
-export default function LoginPage() {
+export default function HomePage() {
   const router = useRouter();
-  const [participants, setParticipants] = useState<Participant[]>([]);
-  const [selectedStudentId, setSelectedStudentId] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [studentCode, setStudentCode] = useState("");
+  const [teacherMode, setTeacherMode] = useState<"login" | "register">("login");
+  const [teacherName, setTeacherName] = useState("");
+  const [teacherEmail, setTeacherEmail] = useState("");
+  const [teacherPassword, setTeacherPassword] = useState("");
+  const [teacherConfirmPassword, setTeacherConfirmPassword] = useState("");
+  const [isTeacherSignedIn, setIsTeacherSignedIn] = useState(false);
+  const [studentMessage, setStudentMessage] = useState("");
+  const [teacherMessage, setTeacherMessage] = useState("");
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(
-      collection(db, "participants"),
-      (snapshot) => {
-        const items = snapshot.docs.map((docItem) => {
-          const data = docItem.data() as {
-            studentId?: string;
-            fullName?: string;
-            ranking?: number;
-          };
-
-          return {
-            docId: docItem.id,
-            studentId: data.studentId || docItem.id,
-fullName: data.fullName || "Unknown student",
- ranking: data.ranking || 0
-          };
-        });
-
-        items.sort((a, b) => a.fullName.localeCompare(b.fullName));
-        setParticipants(items);
-        setIsLoading(false);
-      },
-      () => {
-        setErrorMessage("Could not load participants from Firebase.");
-        setIsLoading(false);
-      }
-    );
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsTeacherSignedIn(Boolean(user));
+    });
 
     return () => unsubscribe();
   }, []);
 
-  const handleContinue = () => {
-    if (!selectedStudentId) {
-      alert("Please choose a student name before continuing.");
+  const handleStudentEnter = async () => {
+    const normalizedCode = studentCode.trim();
+
+    if (!normalizedCode) {
+      setStudentMessage("Vui lòng nhập code lớp.");
       return;
     }
 
-    const selectedStudent = participants.find(
-      (participant) => participant.studentId === selectedStudentId
-    );
+    const snapshot = await getDoc(classDocRef(normalizedCode));
 
-    if (!selectedStudent) {
-      alert("Student not found.");
+    if (!snapshot.exists()) {
+      setStudentMessage("Code lớp không tồn tại hoặc đã bị xóa.");
       return;
     }
 
-    localStorage.setItem("selectedStudentId", selectedStudent.studentId);
-    localStorage.setItem("selectedStudentName", selectedStudent.fullName);
-
-    router.push("/waiting");
+    localStorage.setItem(activeClassIdKey(), normalizedCode);
+    router.push(`/class/${normalizedCode}`);
   };
 
-  const handleAdminLogin = () => {
-    router.push("/admin");
+  const upsertTeacherProfile = async (user: User, preferredName?: string) => {
+    const displayName = preferredName?.trim() || user.displayName || user.email || "Giảng viên";
+
+    await setDoc(
+      doc(db, "teachers", user.uid),
+      {
+        uid: user.uid,
+        email: user.email,
+        displayName,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      },
+      { merge: true }
+    );
+  };
+
+  const handleTeacherAuth = async () => {
+    if (!teacherEmail || !teacherPassword) {
+      setTeacherMessage("Vui lòng nhập email và mật khẩu Giảng viên.");
+      return;
+    }
+
+    if (teacherMode === "register") {
+      if (!teacherName.trim()) {
+        setTeacherMessage("Vui lòng nhập tên Giảng viên.");
+        return;
+      }
+
+      if (!teacherConfirmPassword) {
+        setTeacherMessage("Vui lòng nhập lại mật khẩu.");
+        return;
+      }
+
+      if (teacherPassword !== teacherConfirmPassword) {
+        setTeacherMessage("Mật khẩu xác nhận không khớp.");
+        return;
+      }
+    }
+
+    setTeacherMessage("");
+
+    try {
+      if (teacherMode === "register") {
+        const credential = await createUserWithEmailAndPassword(
+          auth,
+          teacherEmail.trim(),
+          teacherPassword
+        );
+
+        await upsertTeacherProfile(credential.user, teacherName.trim());
+      } else {
+        const credential = await signInWithEmailAndPassword(
+          auth,
+          teacherEmail.trim(),
+          teacherPassword
+        );
+
+        await upsertTeacherProfile(credential.user);
+      }
+
+      router.push("/admin");
+    } catch (error) {
+      const nextMessage =
+        error instanceof Error ? error.message : "Không thể xác thực Giảng viên.";
+      setTeacherMessage(nextMessage);
+    }
+  };
+
+  const handleTeacherGoogleAuth = async () => {
+    setTeacherMessage("");
+
+    try {
+      const provider = new GoogleAuthProvider();
+      const credential = await signInWithPopup(auth, provider);
+      await upsertTeacherProfile(credential.user);
+      router.push("/admin");
+    } catch (error) {
+      const nextMessage =
+        error instanceof Error
+          ? error.message
+          : "Không thể đăng nhập Giảng viên bằng Google.";
+      setTeacherMessage(nextMessage);
+    }
   };
 
   return (
     <main className="page-shell">
-      <section className="card">
-        <span className="eyebrow">Stage 4 Firebase demo</span>
+      <section className="card card-wide">
+        <span className="eyebrow">Ứng dụng chia nhóm</span>
         <h1>Group Matching App</h1>
         <p className="lead">
-          Student names are now loaded from Firebase Firestore in realtime.
+          Sinh viên vào bằng code lớp, còn Giảng viên đăng nhập để tạo và quản lý lớp.
         </p>
 
-        <label className="field">
-          <span>Select student name</span>
-          <select
-            value={selectedStudentId}
-            onChange={(event) => setSelectedStudentId(event.target.value)}
-            disabled={isLoading}
-          >
-            <option value="">
-              {isLoading ? "Loading students..." : "-- Choose a name --"}
-            </option>
-            {participants.map((participant) => (
-              <option
-                key={participant.docId}
-                value={participant.studentId}
-              >
-                {participant.fullName} ({participant.studentId})
-              </option>
-            ))}
-          </select>
-        </label>
+        <div className="panel-grid">
+          <div className="status-box">
+            <p className="status-label">Lối vào Sinh viên</p>
+            <label className="field">
+              <span>Nhập code lớp</span>
+              <input
+                className="text-input"
+                value={studentCode}
+                onChange={(event) => {
+                  setStudentCode(event.target.value);
+                  setStudentMessage("");
+                }}
+                placeholder="Ví dụ: ABC123"
+              />
+            </label>
+            <button className="primary-button" onClick={handleStudentEnter}>
+              Vào lớp bằng code
+            </button>
+            {studentMessage ? <p className="lead">{studentMessage}</p> : null}
+          </div>
 
-        {errorMessage ? <p className="lead">{errorMessage}</p> : null}
+          <div className="status-box">
+            <p className="status-label">Lối vào Giảng viên</p>
 
-        <button className="primary-button" onClick={handleContinue}>
-          Continue
-        </button>
+            {isTeacherSignedIn ? (
+              <>
+                <p className="status-value">Giảng viên</p>
+                <p className="muted-text">
+                  Phiên đăng nhập Giảng viên đang hoạt động. Bạn có thể tiếp tục quản lý các
+                  lớp đã tạo.
+                </p>
+                <button className="secondary-button" onClick={() => router.push("/admin")}>
+                  Vào trang quản lý lớp
+                </button>
+              </>
+            ) : (
+              <>
+                <div className="button-stack" style={{ marginBottom: 16 }}>
+                  <button
+                    className={teacherMode === "login" ? "primary-button" : "secondary-button"}
+                    onClick={() => {
+                      setTeacherMode("login");
+                      setTeacherMessage("");
+                    }}
+                    type="button"
+                  >
+                    Đăng nhập
+                  </button>
+                  <button
+                    className={teacherMode === "register" ? "primary-button" : "secondary-button"}
+                    onClick={() => {
+                      setTeacherMode("register");
+                      setTeacherMessage("");
+                    }}
+                    type="button"
+                  >
+                    Tạo tài khoản
+                  </button>
+                </div>
 
-        <div className="divider" />
+                {teacherMode === "register" ? (
+                  <label className="field">
+                    <span>Tên Giảng viên</span>
+                    <input
+                      className="text-input"
+                      value={teacherName}
+                      onChange={(event) => setTeacherName(event.target.value)}
+                    />
+                  </label>
+                ) : null}
 
-        <button className="secondary-button" onClick={handleAdminLogin}>
-          Admin Login
-        </button>
+                <label className="field">
+                  <span>Email Giảng viên</span>
+                  <input
+                    className="text-input"
+                    type="email"
+                    value={teacherEmail}
+                    onChange={(event) => setTeacherEmail(event.target.value)}
+                  />
+                </label>
+
+                <label className="field">
+                  <span>Mật khẩu Giảng viên</span>
+                  <input
+                    className="text-input"
+                    type="password"
+                    value={teacherPassword}
+                    onChange={(event) => setTeacherPassword(event.target.value)}
+                  />
+                </label>
+
+                {teacherMode === "register" ? (
+                  <label className="field">
+                    <span>Nhập lại mật khẩu</span>
+                    <input
+                      className="text-input"
+                      type="password"
+                      value={teacherConfirmPassword}
+                      onChange={(event) => setTeacherConfirmPassword(event.target.value)}
+                    />
+                  </label>
+                ) : null}
+
+                <div className="button-stack">
+                  <button className="secondary-button" onClick={handleTeacherAuth}>
+                    {teacherMode === "register"
+                      ? "Tạo tài khoản Giảng viên"
+                      : "Đăng nhập Giảng viên"}
+                  </button>
+
+                  <button className="primary-button" onClick={handleTeacherGoogleAuth}>
+                    Đăng nhập bằng Google
+                  </button>
+                </div>
+
+                {teacherMessage ? <p className="lead">{teacherMessage}</p> : null}
+              </>
+            )}
+          </div>
+        </div>
       </section>
     </main>
   );
