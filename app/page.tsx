@@ -184,29 +184,6 @@ export default function HomePage() {
               </>
             ) : (
               <>
-                <div className="button-stack" style={{ marginBottom: 16 }}>
-                  <button
-                    className={teacherMode === "login" ? "primary-button" : "secondary-button"}
-                    onClick={() => {
-                      setTeacherMode("login");
-                      setTeacherMessage("");
-                    }}
-                    type="button"
-                  >
-                    Đăng nhập
-                  </button>
-                  <button
-                    className={teacherMode === "register" ? "primary-button" : "secondary-button"}
-                    onClick={() => {
-                      setTeacherMode("register");
-                      setTeacherMessage("");
-                    }}
-                    type="button"
-                  >
-                    Tạo tài khoản
-                  </button>
-                </div>
-
                 {teacherMode === "register" ? (
                   <label className="field">
                     <span>Tên Giảng viên</span>
