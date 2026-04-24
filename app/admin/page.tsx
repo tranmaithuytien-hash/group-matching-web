@@ -395,19 +395,11 @@ function buildRound2Matching(
   const rankingByLeader = new Map(
     leaderRankings.map((item) => [item.leaderStudentId, item.preferredMemberIds])
   );
-  const leaderOrder = new Map(leaders.map((leader, index) => [leader.studentId, index]));
-  const remainingCapacity = new Map(
+  const capacityByLeader = new Map(
     leaders.map((leader) => [
       leader.studentId,
       getLeaderCapacity(leaders, leader.studentId, participants.length)
     ])
-  );
-  const assignedLeaderByMember = new Map<string, string>();
-  const groupMembersByLeader = new Map<string, string[]>(
-    leaders.map((leader) => [leader.studentId, []])
-  );
-  const participantRanking = new Map(
-    participants.map((participant) => [participant.studentId, participant.ranking])
   );
   const leaderRankIndexMap = new Map<string, Map<string, number>>(
     leaders.map((leader) => {
@@ -418,67 +410,80 @@ function buildRound2Matching(
       ];
     })
   );
-
-  const assignMemberToLeader = (memberId: string, leaderId: string) => {
-    if (assignedLeaderByMember.has(memberId)) {
-      return;
-    }
-
-    const capacity = remainingCapacity.get(leaderId) || 0;
-
-    if (capacity <= 0) {
-      return;
-    }
-
-    assignedLeaderByMember.set(memberId, leaderId);
-    remainingCapacity.set(leaderId, capacity - 1);
-    groupMembersByLeader.set(leaderId, [...(groupMembersByLeader.get(leaderId) || []), memberId]);
-  };
-
-  const mutualCandidates: Array<{
-    memberId: string;
-    leaderId: string;
-    memberPreferenceIndex: number;
-    leaderRankingIndex: number;
-  }> = [];
+  const mutualLeaderChoicesByMember = new Map<string, string[]>();
+  const acceptedMembersByLeader = new Map<string, string[]>(
+    leaders.map((leader) => [leader.studentId, []])
+  );
+  const nextProposalIndexByMember = new Map<string, number>();
+  const queue: string[] = [];
 
   memberPreferences.forEach((preference) => {
-    preference.preferredLeaderIds.forEach((leaderId, memberPreferenceIndex) => {
-      const leaderRankingIndex = leaderRankIndexMap.get(leaderId)?.get(preference.memberStudentId);
+    const mutualLeaderIds = preference.preferredLeaderIds.filter((leaderId) =>
+      leaderRankIndexMap.get(leaderId)?.has(preference.memberStudentId)
+    );
 
-      if (leaderRankingIndex !== undefined) {
-        mutualCandidates.push({
-          memberId: preference.memberStudentId,
-          leaderId,
-          memberPreferenceIndex,
-          leaderRankingIndex
-        });
-      }
-    });
+    mutualLeaderChoicesByMember.set(preference.memberStudentId, mutualLeaderIds);
+
+    if (mutualLeaderIds.length > 0) {
+      queue.push(preference.memberStudentId);
+      nextProposalIndexByMember.set(preference.memberStudentId, 0);
+    }
   });
 
-  mutualCandidates
-    .sort((a, b) => {
-      if (a.memberPreferenceIndex !== b.memberPreferenceIndex) {
-        return a.memberPreferenceIndex - b.memberPreferenceIndex;
-      }
+  const compareMembersForLeader = (leaderId: string, memberAId: string, memberBId: string) => {
+    const memberRankIndexMap = leaderRankIndexMap.get(leaderId);
+    const leaderPreferenceA = memberRankIndexMap?.get(memberAId) ?? Number.MAX_SAFE_INTEGER;
+    const leaderPreferenceB = memberRankIndexMap?.get(memberBId) ?? Number.MAX_SAFE_INTEGER;
 
-      if (a.leaderRankingIndex !== b.leaderRankingIndex) {
-        return a.leaderRankingIndex - b.leaderRankingIndex;
-      }
+    if (leaderPreferenceA !== leaderPreferenceB) {
+      return leaderPreferenceA - leaderPreferenceB;
+    }
 
-      if ((leaderOrder.get(a.leaderId) || 0) !== (leaderOrder.get(b.leaderId) || 0)) {
-        return (leaderOrder.get(a.leaderId) || 0) - (leaderOrder.get(b.leaderId) || 0);
-      }
+    const rankingA = memberById.get(memberAId)?.ranking ?? Number.MAX_SAFE_INTEGER;
+    const rankingB = memberById.get(memberBId)?.ranking ?? Number.MAX_SAFE_INTEGER;
 
-      return (participantRanking.get(a.memberId) || 999) - (participantRanking.get(b.memberId) || 999);
-    })
-    .forEach((candidate) => {
-      assignMemberToLeader(candidate.memberId, candidate.leaderId);
+    if (rankingA !== rankingB) {
+      return rankingA - rankingB;
+    }
+
+    return memberAId.localeCompare(memberBId);
+  };
+
+  while (queue.length > 0) {
+    const memberId = queue.shift();
+
+    if (!memberId) {
+      continue;
+    }
+
+    const mutualLeaderIds = mutualLeaderChoicesByMember.get(memberId) || [];
+    const nextProposalIndex = nextProposalIndexByMember.get(memberId) || 0;
+
+    if (nextProposalIndex >= mutualLeaderIds.length) {
+      continue;
+    }
+
+    const leaderId = mutualLeaderIds[nextProposalIndex];
+    nextProposalIndexByMember.set(memberId, nextProposalIndex + 1);
+
+    const acceptedMembers = [...(acceptedMembersByLeader.get(leaderId) || []), memberId].sort(
+      (memberAId, memberBId) => compareMembersForLeader(leaderId, memberAId, memberBId)
+    );
+    const capacity = capacityByLeader.get(leaderId) || 0;
+    const keptMembers = acceptedMembers.slice(0, capacity);
+    const rejectedMembers = acceptedMembers.slice(capacity);
+
+    acceptedMembersByLeader.set(leaderId, keptMembers);
+
+    rejectedMembers.forEach((rejectedMemberId) => {
+      if ((nextProposalIndexByMember.get(rejectedMemberId) || 0) < (mutualLeaderChoicesByMember.get(rejectedMemberId) || []).length) {
+        queue.push(rejectedMemberId);
+      }
     });
+  }
 
   return leaders.map((leader) => {
-    const memberIds = groupMembersByLeader.get(leader.studentId) || [];
+    const memberIds = acceptedMembersByLeader.get(leader.studentId) || [];
 
     return {
       leaderStudentId: leader.studentId,
@@ -528,6 +533,10 @@ export default function AdminPage() {
   const [rosterModalMode, setRosterModalMode] = useState<"view" | "edit">("view");
   const [editClassName, setEditClassName] = useState("");
   const [editRosterText, setEditRosterText] = useState("");
+  const [isActivityModalOpen, setIsActivityModalOpen] = useState(false);
+  const [activityModalTitle, setActivityModalTitle] = useState("");
+  const [activityModalSummary, setActivityModalSummary] = useState("");
+  const [activityModalEntries, setActivityModalEntries] = useState<string[]>([]);
   const autoStartedRound1Ref = useRef(false);
   const autoOpenedRound2Ref = useRef(false);
   const autoMatchedRound2Ref = useRef(false);
@@ -930,6 +939,23 @@ export default function AdminPage() {
   const loggedInParticipantCount = participants.filter(
     (participant) => participant.hasSetPassword
   ).length;
+  const loggedInParticipants = participants
+    .filter((participant) => participant.hasSetPassword)
+    .slice()
+    .sort((a, b) => a.fullName.localeCompare(b.fullName));
+  const round1VoterNames = round1Votes
+    .map((vote) => participants.find((participant) => participant.studentId === vote.voterStudentId)?.fullName)
+    .filter(Boolean) as string[];
+  const round2MemberSubmitterNames = memberPreferences
+    .map((preference) =>
+      participants.find((participant) => participant.studentId === preference.memberStudentId)?.fullName
+    )
+    .filter(Boolean) as string[];
+  const round2LeaderSubmitterNames = leaderRankings
+    .map((ranking) =>
+      participants.find((participant) => participant.studentId === ranking.leaderStudentId)?.fullName
+    )
+    .filter(Boolean) as string[];
   const expectedLeaderSubmissionCount = top4Leaders.length || top4Preview.length;
   const expectedMemberSubmissionCount = participants.filter(
     (participant) => participant.roleAfterRound1 === "member"
@@ -938,6 +964,15 @@ export default function AdminPage() {
   const round3RoomTargetCount =
     top4Leaders.length || top4Preview.length || leaderTargetCount;
   const createdRoomCount = round3Rooms.filter((room) => room.roomName.trim()).length;
+  const round3CreatedRoomLeaderNames = round3Rooms
+    .filter((room) => room.roomName.trim())
+    .map((room) => participants.find((participant) => participant.studentId === room.leaderStudentId)?.fullName)
+    .filter(Boolean) as string[];
+  const round3ApplicationSenderNames = round3Applications
+    .map((application) =>
+      participants.find((participant) => participant.studentId === application.applicantStudentId)?.fullName
+    )
+    .filter(Boolean) as string[];
   const liveRound3Groups = buildRound3ResultGroups(
     top4Leaders.length > 0 ? top4Leaders : top4Preview,
     matchingResults,
@@ -969,6 +1004,13 @@ export default function AdminPage() {
 
   const closeRosterModal = () => {
     setIsRosterModalOpen(false);
+  };
+
+  const openActivityModal = (title: string, summary: string, entries: string[]) => {
+    setActivityModalTitle(title);
+    setActivityModalSummary(summary);
+    setActivityModalEntries(entries);
+    setIsActivityModalOpen(true);
   };
 
   const handleCreateClass = async () => {
@@ -1902,50 +1944,157 @@ export default function AdminPage() {
           </div>
 
           <div className="status-box stat-box">
-            <p className="status-label">ĐN SV</p>
-            <p className="status-value stat-value-sm">
-              {loggedInParticipantCount}/{participantCount}
-            </p>
+            <p className="status-label">Số SV đăng nhập</p>
+            <button
+              type="button"
+              onClick={() =>
+                openActivityModal(
+                  "Danh sách SV đã đăng nhập",
+                  `${loggedInParticipantCount}/${participantCount} sinh viên`,
+                  loggedInParticipants.map((participant) => participant.fullName)
+                )
+              }
+              disabled={loggedInParticipantCount === 0}
+              style={{
+                border: 0,
+                background: "transparent",
+                padding: 0,
+                textAlign: "left",
+                cursor: loggedInParticipantCount > 0 ? "pointer" : "default"
+              }}
+            >
+              <p className="status-value stat-value-sm">
+                {loggedInParticipantCount}/{participantCount}
+              </p>
+            </button>
           </div>
 
           <div className="status-box stat-box">
-            <p className="status-label">Vote R1</p>
-            <p className="status-value stat-value-sm">
-              {round1Votes.length}/{participantCount}
-            </p>
+            <p className="status-label">Đã vote R1</p>
+            <button
+              type="button"
+              onClick={() =>
+                openActivityModal(
+                  "Danh sách SV đã vote R1",
+                  `${round1Votes.length}/${participantCount} sinh viên`,
+                  round1VoterNames
+                )
+              }
+              disabled={round1Votes.length === 0}
+              style={{
+                border: 0,
+                background: "transparent",
+                padding: 0,
+                textAlign: "left",
+                cursor: round1Votes.length > 0 ? "pointer" : "default"
+              }}
+            >
+              <p className="status-value stat-value-sm">
+                {round1Votes.length}/{participantCount}
+              </p>
+            </button>
           </div>
 
           <div className="status-box stat-box">
-            <p className="status-label">NV R2</p>
-            <p className="status-value stat-value-sm">
-              {memberPreferences.length}/{expectedMemberSubmissionCount}
-            </p>
+            <p className="status-label">Thành viên đã gửi R2</p>
+            <button
+              type="button"
+              onClick={() =>
+                openActivityModal(
+                  "Danh sách Thành viên đã gửi R2",
+                  `${memberPreferences.length}/${expectedMemberSubmissionCount} thành viên`,
+                  round2MemberSubmitterNames
+                )
+              }
+              disabled={memberPreferences.length === 0}
+              style={{
+                border: 0,
+                background: "transparent",
+                padding: 0,
+                textAlign: "left",
+                cursor: memberPreferences.length > 0 ? "pointer" : "default"
+              }}
+            >
+              <p className="status-value stat-value-sm">
+                {memberPreferences.length}/{expectedMemberSubmissionCount}
+              </p>
+            </button>
           </div>
 
           <div className="status-box stat-box">
-            <p className="status-label">DS NT</p>
-            <p className="status-value stat-value-sm">
-              {leaderRankings.length}/{expectedLeaderSubmissionCount}
-            </p>
+            <p className="status-label">Nhóm trưởng đã gửi R2</p>
+            <button
+              type="button"
+              onClick={() =>
+                openActivityModal(
+                  "Danh sách Nhóm trưởng đã gửi R2",
+                  `${leaderRankings.length}/${expectedLeaderSubmissionCount} nhóm trưởng`,
+                  round2LeaderSubmitterNames
+                )
+              }
+              disabled={leaderRankings.length === 0}
+              style={{
+                border: 0,
+                background: "transparent",
+                padding: 0,
+                textAlign: "left",
+                cursor: leaderRankings.length > 0 ? "pointer" : "default"
+              }}
+            >
+              <p className="status-value stat-value-sm">
+                {leaderRankings.length}/{expectedLeaderSubmissionCount}
+              </p>
+            </button>
           </div>
 
           <div className="status-box stat-box">
-            <p className="status-label">Match R2</p>
-            <p className="status-value stat-value-sm">
-              {round2Matched ? "Xong" : "Chưa"}
-            </p>
+            <p className="status-label">Tạo phòng R3</p>
+            <button
+              type="button"
+              onClick={() =>
+                openActivityModal(
+                  "Danh sách Nhóm trưởng đã tạo phòng R3",
+                  `${createdRoomCount}/${round3RoomTargetCount} nhóm`,
+                  round3CreatedRoomLeaderNames
+                )
+              }
+              disabled={createdRoomCount === 0}
+              style={{
+                border: 0,
+                background: "transparent",
+                padding: 0,
+                textAlign: "left",
+                cursor: createdRoomCount > 0 ? "pointer" : "default"
+              }}
+            >
+              <p className="status-value stat-value-sm">
+                {createdRoomCount}/{round3RoomTargetCount}
+              </p>
+            </button>
           </div>
 
           <div className="status-box stat-box">
-            <p className="status-label">Phòng R3</p>
-            <p className="status-value stat-value-sm">
-              {createdRoomCount}/{round3RoomTargetCount}
-            </p>
-          </div>
-
-          <div className="status-box stat-box">
-            <p className="status-label">Thư R3</p>
-            <p className="status-value stat-value-sm">{round3Applications.length}</p>
+            <p className="status-label">Thư đã gửi R3</p>
+            <button
+              type="button"
+              onClick={() =>
+                openActivityModal(
+                  "Danh sách Sinh viên đã gửi thư R3",
+                  `${round3Applications.length} thư`,
+                  round3ApplicationSenderNames
+                )
+              }
+              disabled={round3Applications.length === 0}
+              style={{
+                border: 0,
+                background: "transparent",
+                padding: 0,
+                textAlign: "left",
+                cursor: round3Applications.length > 0 ? "pointer" : "default"
+              }}
+            >
+              <p className="status-value stat-value-sm">{round3Applications.length}</p>
+            </button>
           </div>
         </div>
 
@@ -2205,6 +2354,70 @@ export default function AdminPage() {
           Quay về trang đầu
         </Link>
       </section>
+
+      {isActivityModalOpen ? (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(15, 23, 42, 0.45)",
+            display: "grid",
+            placeItems: "center",
+            padding: 20,
+            zIndex: 49
+          }}
+        >
+          <div
+            style={{
+              width: "min(100%, 720px)",
+              maxHeight: "80vh",
+              overflow: "auto",
+              background: "#ffffff",
+              borderRadius: 20,
+              padding: 24,
+              border: "1px solid var(--border)",
+              boxShadow: "0 20px 50px rgba(15, 23, 42, 0.2)"
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                gap: 12,
+                marginBottom: 18
+              }}
+            >
+              <div>
+                <p className="status-label" style={{ marginBottom: 6 }}>
+                  {activityModalTitle}
+                </p>
+                <p className="status-value" style={{ fontSize: 20 }}>
+                  {activityModalSummary}
+                </p>
+              </div>
+              <button
+                className="secondary-button"
+                onClick={() => setIsActivityModalOpen(false)}
+                style={{ width: 120 }}
+              >
+                Đóng
+              </button>
+            </div>
+
+            <div className="name-list">
+              {activityModalEntries.length > 0 ? (
+                activityModalEntries.map((entry, index) => (
+                  <div className="name-item" key={`activity-entry-${index}-${entry}`}>
+                    {index + 1}. {entry}
+                  </div>
+                ))
+              ) : (
+                <div className="name-item">Hiện chưa có dữ liệu để hiển thị.</div>
+              )}
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       {isRosterModalOpen ? (
         <div

@@ -184,16 +184,17 @@ h1 {
 
 .stat-box {
   margin-bottom: 0;
-  padding: 14px;
+  padding: 12px 14px;
+  min-height: 88px;
 }
 
 .stat-value-sm {
-  font-size: 17px;
+  font-size: 16px;
 }
 
 .stat-value-xs {
-  font-size: 14px;
-  line-height: 1.45;
+  font-size: 13px;
+  line-height: 1.35;
 }
 
 .card-wide {
@@ -232,9 +233,18 @@ h1 {
   line-height: 1.6;
 }
 
+.stats-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
 @media (min-width: 760px) {
   .panel-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
