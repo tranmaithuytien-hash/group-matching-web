@@ -1,0 +1,273 @@
+﻿MARVECLASS
+Äáº·c táº£ tÃ­nh nÄƒng
+Chá»n chá»§ Ä‘á» thuyáº¿t trÃ¬nh
+PhiÃªn báº£n
+1.0
+NgÃ y soáº¡n
+ThÃ¡ng 4, 2025
+Tráº¡ng thÃ¡i
+Báº£n nhÃ¡p Ä‘á»ƒ triá»ƒn khai
+DÃ nh cho
+Láº­p trÃ¬nh viÃªn
+1. Tá»•ng quan tÃ­nh nÄƒng
+TÃ­nh nÄƒng "Chá»n chá»§ Ä‘á» thuyáº¿t trÃ¬nh" cho phÃ©p giáº£ng viÃªn tá»• chá»©c phiÃªn phÃ¢n chia chá»§ Ä‘á» thuyáº¿t trÃ¬nh cho sinh viÃªn theo nhiá»u hÃ¬nh thá»©c khÃ¡c nhau â€” tá»« tá»± chá»n, Ä‘áº¥u giÃ¡ cÃ³ yáº¿u tá»‘ chiáº¿n lÆ°á»£c, Ä‘áº¿n ngáº«u nhiÃªn hoÃ n toÃ n. Má»¥c tiÃªu lÃ  táº¡o sá»± cÃ´ng báº±ng, minh báº¡ch vÃ  thÃº vá»‹ trong quÃ¡ trÃ¬nh phÃ¢n cÃ´ng chá»§ Ä‘á».
+NgÆ°á»i dÃ¹ng chÃ­nh
+Giáº£ng viÃªn (GV) â€” táº¡o vÃ  Ä‘iá»u hÃ nh phiÃªn
+NgÆ°á»i dÃ¹ng phá»¥
+Sinh viÃªn (SV) â€” tham gia phiÃªn qua class code
+Äiá»u kiá»‡n tiÃªn quyáº¿t
+GV cÃ³ tÃ i liá»‡u chá»§ Ä‘á» thuyáº¿t trÃ¬nh vÃ  danh sÃ¡ch lá»›p
+Route Ä‘á» xuáº¥t
+/features/topic-picker
+1.1 Logic tÃ­nh sá»‘ nhÃ³m
+Khi GV nháº­p sá»‘ lÆ°á»£ng SV trong lá»›p vÃ  sá»‘ chá»§ Ä‘á» thuyáº¿t trÃ¬nh, há»‡ thá»‘ng tá»± Ä‘á»™ng tÃ­nh cáº¥u trÃºc nhÃ³m theo quy táº¯c sau:
+Sá»‘ chá»§ Ä‘á» = Sá»‘ nhÃ³m cáº§n táº¡o
+Má»—i nhÃ³m pháº£i cÃ³ Ã­t nháº¥t 2 SV
+PhÃ¢n bá»• SV Ä‘á»u nháº¥t cÃ³ thá»ƒ, Æ°u tiÃªn nhÃ³m 2 thÃ nh viÃªn
+CÃ´ng thá»©c: sá»‘ nhÃ³m 3 TV = (tá»•ng SV) mod (sá»‘ chá»§ Ä‘á»); sá»‘ nhÃ³m 2 TV = sá»‘ chá»§ Ä‘á» - sá»‘ nhÃ³m 3 TV
+VÃ­ dá»¥ minh há»a:
+Lá»›p 25 SV  +  11 chá»§ Ä‘á» thuyáº¿t trÃ¬nh
+â†’  25 mod 11 = 3  â†’  3 nhÃ³m 3 TV  +  8 nhÃ³m 2 TV
+â†’  Kiá»ƒm tra: (3 Ã— 3) + (8 Ã— 2) = 9 + 16 = 25 SV âœ“
+âš   Náº¿u khÃ´ng thá»ƒ phÃ¢n bá»• Ä‘á»ƒ má»—i nhÃ³m cÃ³ Ã­t nháº¥t 2 SV (vÃ­ dá»¥ SV Ã­t hÆ¡n 2x sá»‘ chá»§ Ä‘á»), há»‡ thá»‘ng hiá»ƒn thá»‹ thÃ´ng bÃ¡o lá»—i vÃ  yÃªu cáº§u GV Ä‘iá»u chá»‰nh sá»‘ chá»§ Ä‘á».
+2. Luá»“ng thiáº¿t láº­p phiÃªn â€” Giáº£ng viÃªn
+2.1 CÃ¡c bÆ°á»›c cáº¥u hÃ¬nh phiÃªn
+GV thá»±c hiá»‡n theo thá»© tá»± cÃ¡c bÆ°á»›c sau Ä‘á»ƒ táº¡o má»™t phiÃªn chá»n chá»§ Ä‘á»:
+1
+Chá»n mÃ´n há»c
+GV chá»n mÃ´n tá»« danh sÃ¡ch cÃ¡c mÃ´n GV Ä‘Ã£ upload trong TÃ i liá»‡u
+2
+Chá»n lá»›p há»c
+GV chá»n lá»›p muá»‘n tá»• chá»©c phiÃªn (lá»›p Ä‘Ã£ cÃ³ trong há»‡ thá»‘ng hoáº·c import danh sÃ¡ch má»›i).
+3
+Import / Chá»n danh sÃ¡ch chá»§ Ä‘á»
+GV import tÃ i liá»‡u chá»§ Ä‘á» cho mÃ´n nÃ y (náº¿u chÆ°a cÃ³) hoáº·c chá»n tá»« tÃ i liá»‡u Ä‘Ã£ upload trÆ°á»›c. CÃ³ thá»ƒ import trá»±c tiáº¿p táº¡i trang nÃ y hoáº·c tá»« trang TÃ i liá»‡u. Sau khi import, GV chá»n chá»§ Ä‘á» nÃ o sáº½ xuáº¥t hiá»‡n trong phiÃªn (tick/bá» tick tá»«ng chá»§ Ä‘á»).
+4
+Nháº­p sá»‘ lÆ°á»£ng chá»§ Ä‘á» trong phiÃªn
+Há»‡ thá»‘ng tá»± Ä‘á» xuáº¥t dá»±a trÃªn sá»‘ chá»§ Ä‘á» GV Ä‘Ã£ chá»n á»Ÿ bÆ°á»›c 3. GV cÃ³ thá»ƒ Ä‘iá»u chá»‰nh. Há»‡ thá»‘ng tá»± tÃ­nh vÃ  hiá»ƒn thá»‹ cáº¥u trÃºc nhÃ³m ngay láº­p tá»©c (vÃ­ dá»¥: "8 nhÃ³m 2 TV + 3 nhÃ³m 3 TV").
+5
+Chá»n cá»™t Ä‘iá»ƒm (cho Kiá»ƒu 1 â€” Äáº¥u giÃ¡)
+GV chá»n cá»™t Ä‘iá»ƒm nÃ o trong Danh sÃ¡ch lá»›p (náº¿u GV nháº­p nhiá»u cá»™t Ä‘iá»ƒm) sáº½ Ä‘Æ°á»£c dÃ¹ng Ä‘á»ƒ tÃ­nh Ä‘iá»ƒm game (má»—i 1 Ä‘iá»ƒm há»c táº­p = 10 Ä‘iá»ƒm game). Chá»‰ hiá»ƒn thá»‹ bÆ°á»›c nÃ y náº¿u GV chá»n Kiá»ƒu 1.
+6
+Chá»n kiá»ƒu chia nhÃ³m / chá»§ Ä‘á»
+GV chá»n 1 trong 3 kiá»ƒu: Kiá»ƒu 1 â€” Äáº¥u giÃ¡ chá»§ Ä‘á», Kiá»ƒu 2 â€” Tá»± chá»n phÃ²ng, Kiá»ƒu 3 â€” Random hoÃ n toÃ n.
+7
+XÃ¡c nháº­n vÃ  táº¡o phiÃªn
+GV xem tÃ³m táº¯t cáº¥u hÃ¬nh, báº¥m "Táº¡o phiÃªn" Ä‘á»ƒ sinh ra class code vÃ  link tham gia cho SV.
+2.2 ThÃ´ng tin cáº¥u hÃ¬nh phiÃªn
+Dá»¯ liá»‡u cáº§n lÆ°u
+MÃ´n há»c, lá»›p há»c, danh sÃ¡ch chá»§ Ä‘á», sá»‘ nhÃ³m 2 TV, sá»‘ nhÃ³m 3 TV, kiá»ƒu chia, cá»™t Ä‘iá»ƒm (náº¿u cÃ³), class code, tráº¡ng thÃ¡i phiÃªn
+Class code
+Tá»± sinh, dáº¡ng 6 kÃ½ tá»±, duy nháº¥t
+Tráº¡ng thÃ¡i phiÃªn
+Chuáº©n bá»‹ / Äang cháº¡y / ÄÃ£ káº¿t thÃºc
+3. Kiá»ƒu 1 â€” Äáº¥u giÃ¡ chá»§ Ä‘á»
+Kiá»ƒu chÆ¡i cÃ³ 2 vÃ²ng liÃªn tiáº¿p: VÃ²ng 1 lÃ  báº¯t nhÃ³m tá»± do, VÃ²ng 2 lÃ  Ä‘áº¥u giÃ¡ kÃ­n Ä‘á»ƒ chá»n chá»§ Ä‘á». CÃ³ yáº¿u tá»‘ chiáº¿n lÆ°á»£c vÃ  tÃ­nh Ä‘iá»ƒm.
+3.1 ÄÄƒng nháº­p phiÃªn â€” Sinh viÃªn
+SV truy cáº­p link hoáº·c nháº­p class code, sau Ä‘Ã³ xÃ¡c thá»±c danh tÃ­nh:
+SV chá»n tÃªn mÃ¬nh tá»« dropdown danh sÃ¡ch lá»›p
+Náº¿u lÃ  láº§n Ä‘áº§u: táº¡o máº­t kháº©u cho phiÃªn game
+Láº§n sau: nháº­p máº­t kháº©u Ä‘Ã£ táº¡o
+â†’  Logic Ä‘Äƒng nháº­p giá»¯ nguyÃªn nhÆ° tÃ­nh nÄƒng Group Matching hiá»‡n cÃ³
+Sau khi Ä‘Äƒng nháº­p thÃ nh cÃ´ng, SV tháº¥y mÃ n hÃ¬nh chÃ o:
+Xin chÃ o, [TÃªn SV]
+Sá»‘ Ä‘iá»ƒm báº¡n Ä‘ang cÃ³ lÃ  [Äiá»ƒm há»c táº­p Ã— 10] Ä‘iá»ƒm
+HÃ£y dÃ¹ng nÃ³ Ä‘á»ƒ láº­p nhÃ³m vÃ  chá»n chá»§ Ä‘á» tháº­t chiáº¿n lÆ°á»£c nhÃ©!
+â†’  Äiá»ƒm game = cá»™t Ä‘iá»ƒm GV chá»n lÃºc cáº¥u hÃ¬nh Ã— 10. VÃ­ dá»¥: 8.5 Ä‘iá»ƒm â†’ 85 Ä‘iá»ƒm game
+3.2 VÃ²ng 1 â€” Báº¯t nhÃ³m
+GV báº¥m nÃºt "Báº¯t Ä‘áº§u vÃ²ng báº¯t nhÃ³m" Ä‘á»ƒ kÃ­ch hoáº¡t. Giao diá»‡n SV chia layout 50/50:
+Layout giao diá»‡n SV
+Cá»™t trÃ¡i (50%)
+TÃªn SV Ä‘ang Ä‘Äƒng nháº­p + danh sÃ¡ch request váº«y tay nháº­n Ä‘Æ°á»£c (pending)
+Cá»™t pháº£i (50%)
+Danh sÃ¡ch toÃ n bá»™ SV khÃ¡c trong lá»›p (Ä‘Ã£ Ä‘Äƒng nháº­p, chÆ°a ghÃ©p Ä‘Ã´i)
+CÆ¡ cháº¿ Váº«y tay (Wave)
+SV chá»n 1 báº¡n trong danh sÃ¡ch bÃªn pháº£i â†’ báº¥m nÃºt "Váº«y tay"
+Báº¡n Ä‘Æ°á»£c váº«y tay tháº¥y request xuáº¥t hiá»‡n á»Ÿ cá»™t trÃ¡i cá»§a mÃ¬nh
+Má»—i SV cÃ³ thá»ƒ nháº­n vÃ´ háº¡n váº«y tay nhÆ°ng chá»‰ Ä‘Æ°á»£c Ä‘á»“ng Ã½ 1 ngÆ°á»i
+Khi Ä‘á»“ng Ã½: 2 SV thÃ nh 1 nhÃ³m nhá», khÃ´ng Ä‘Æ°á»£c váº«y tay thÃªm
+Khi tá»« chá»‘i: request biáº¿n máº¥t, ngÆ°á»i kia váº«n cÃ³ thá»ƒ váº«y ngÆ°á»i khÃ¡c
+Sau khi ghÃ©p Ä‘Ã´i thÃ nh cÃ´ng
+Giao diá»‡n 2 SV hiá»ƒn thá»‹ Ã´ nhÃ³m chung, tÃªn 2 ngÆ°á»i Ä‘á»©ng cáº¡nh nhau
+Má»Ÿ Ã´ chat realtime riÃªng cho 2 thÃ nh viÃªn
+LÆ°á»£t váº«y tay Ä‘Ã£ gá»­i cho ngÆ°á»i khÃ¡c (náº¿u cÃ³) tá»± há»§y
+TÃªn cá»§a 2 SV nÃ y biáº¿n máº¥t khá»i danh sÃ¡ch bÃªn pháº£i cá»§a nhá»¯ng ngÆ°á»i khÃ¡c
+Äiá»u kiá»‡n chuyá»ƒn sang lÆ°á»£t nhÃ³m 3 TV
+NÃºt "Chuyá»ƒn sang lÆ°á»£t nhÃ³m 3 TV" kháº£ dá»¥ng khi má»™t trong hai Ä‘iá»u kiá»‡n thá»a:
+Sá»‘ nhÃ³m 2 TV Ä‘Ã£ Ä‘á»§ báº±ng tá»•ng sá»‘ nhÃ³m cáº§n cÃ³, HOáº¶C
+Sá»‘ SV Ä‘Ã£ ghÃ©p Ä‘Ã´i = sá»‘ SV Ä‘Ã£ Ä‘Äƒng nháº­p (táº¥t cáº£ Ä‘á»u Ä‘Ã£ cÃ³ cáº·p)
+LÆ°á»£t chá»n thÃ nh viÃªn thá»© 3
+Äáº¡i diá»‡n nhÃ³m (SV Ä‘á»©ng Ä‘áº§u danh sÃ¡ch nhÃ³m) Ä‘Æ°á»£c phÃ©p váº«y tay vá»›i 1 SV cÃ²n láº¡i
+TrÆ°á»›c khi gá»­i váº«y tay cho TV3: cáº§n tick Ä‘á»“ng Ã½ cá»§a thÃ nh viÃªn kia trong nhÃ³m
+TrÆ°á»›c khi xÃ¡c nháº­n giá»¯ nhÃ³m 2 TV: cÅ©ng cáº§n tick Ä‘á»“ng Ã½ cá»§a thÃ nh viÃªn kia
+NhÃ³m xÃ¡c nháº­n trÆ°á»›c Ä‘Æ°á»£c chá»‘t trÆ°á»›c â€” slot nhÃ³m 2 TV cÃ³ giá»›i háº¡n
+TV3 Ä‘á»“ng Ã½ â†’ nhÃ³m 3 thÃ nh viÃªn Ä‘Æ°á»£c táº¡o, slot nhÃ³m 3 TV giáº£m 1
+âš   Chá»‰ Ä‘Æ°á»£c táº¡o nhÃ³m 3 TV Ä‘Ãºng theo sá»‘ lÆ°á»£ng quy Ä‘á»‹nh. Náº¿u Ä‘Ã£ Ä‘á»§ slot nhÃ³m 2 TV mÃ  nhÃ³m váº«n muá»‘n giá»¯ 2 TV thÃ¬ khÃ´ng Ä‘Æ°á»£c phÃ©p â€” pháº£i tÃ¬m TV3.
+Xá»­ lÃ½ SV cÃ²n láº¡i sau vÃ²ng báº¯t nhÃ³m
+Náº¿u cÃ²n SV chÆ°a Ä‘Æ°á»£c ghÃ©p: GV báº¥m nÃºt "Random SV cÃ²n láº¡i"
+Há»‡ thá»‘ng random cÃ¡c SV chÆ°a cÃ³ nhÃ³m vÃ o cÃ¡c nhÃ³m 2 TV chÆ°a chá»‘t (Æ°u tiÃªn) hoáº·c táº¡o nhÃ³m má»›i
+Káº¿t quáº£ random hiá»ƒn thá»‹ ngay trÃªn giao diá»‡n SV
+â†’  CÃ¡c nhÃ³m Ä‘Ã£ chá»‘t (xÃ¡c nháº­n giá»¯ 2 TV hoáº·c Ä‘Ã£ cÃ³ 3 TV) khÃ´ng bá»‹ áº£nh hÆ°á»Ÿng
+3.3 VÃ²ng 2 â€” Äáº¥u giÃ¡ kÃ­n chá»§ Ä‘á»
+GV báº¥m "Báº¯t Ä‘áº§u vÃ²ng Ä‘áº¥u giÃ¡" sau khi táº¥t cáº£ nhÃ³m Ä‘Ã£ hÃ¬nh thÃ nh. Má»—i nhÃ³m vÃ o má»™t phÃ²ng riÃªng.
+Giao diá»‡n phÃ²ng nhÃ³m
+TÃªn cÃ¡c thÃ nh viÃªn trong nhÃ³m
+Tá»•ng Ä‘iá»ƒm nhÃ³m = trung bÃ¬nh cá»™ng Ä‘iá»ƒm cÃ¡ nhÃ¢n cÃ¡c thÃ nh viÃªn
+Ã” chat realtime chá»‰ dÃ nh cho thÃ nh viÃªn trong nhÃ³m
+Danh sÃ¡ch táº¥t cáº£ chá»§ Ä‘á» thuyáº¿t trÃ¬nh cÃ²n láº¡i trong vÃ²ng nÃ y
+Äá»“ng há»“ Ä‘áº¿m ngÆ°á»£c 5 phÃºt (má»—i vÃ²ng)
+CÆ¡ cháº¿ Ä‘áº·t giÃ¡
+Chá»‰ Ä‘áº¡i diá»‡n nhÃ³m (SV Ä‘á»©ng Ä‘áº§u danh sÃ¡ch) cÃ³ nÃºt "ÄÆ°a ra quyáº¿t Ä‘á»‹nh"
+Báº¥m nÃºt â†’ hiá»ƒn thá»‹ form: chá»n chá»§ Ä‘á» (dropdown) + nháº­p sá»‘ Ä‘iá»ƒm Ä‘áº·t cÆ°á»£c
+Sá»‘ Ä‘iá»ƒm Ä‘áº·t cÆ°á»£c pháº£i nhá» hÆ¡n tá»•ng Ä‘iá»ƒm nhÃ³m hiá»‡n cÃ³
+Sau khi Ä‘áº¡i diá»‡n Ä‘iá»n xong: cáº§n tick Ä‘á»“ng Ã½ cá»§a táº¥t cáº£ thÃ nh viÃªn cÃ²n láº¡i
+Äá»§ Ä‘á»“ng Ã½ â†’ tráº¡ng thÃ¡i nhÃ³m: "ÄÃ£ ná»™p" (khÃ´ng thá»ƒ sá»­a)
+CÃ¡c nhÃ³m Ä‘Æ°á»£c quyá»n khÃ´ng Ä‘áº·t giÃ¡ trong vÃ²ng Ä‘Ã³
+âš   Má»—i nhÃ³m chá»‰ Ä‘Æ°á»£c quyáº¿t Ä‘á»‹nh 1 láº§n má»—i vÃ²ng, khÃ´ng Ä‘Æ°á»£c sá»­a sau khi ná»™p.
+CÃ´ng bá»‘ káº¿t quáº£ vÃ²ng Ä‘áº¥u giÃ¡
+Káº¿t quáº£ Ä‘Æ°á»£c cÃ´ng bá»‘ khi Ä‘á»§ má»™t trong hai Ä‘iá»u kiá»‡n:
+Táº¥t cáº£ nhÃ³m chÆ°a cÃ³ chá»§ Ä‘á» Ä‘Ã£ ná»™p quyáº¿t Ä‘á»‹nh, HOáº¶C
+Háº¿t 5 phÃºt Ä‘áº¿m ngÆ°á»£c
+Quy táº¯c xÃ¡c Ä‘á»‹nh nhÃ³m tháº¯ng má»—i chá»§ Ä‘á»:
+NhÃ³m Ä‘áº·t giÃ¡ cao nháº¥t cho má»™t chá»§ Ä‘á» sáº½ tháº¯ng chá»§ Ä‘á» Ä‘Ã³
+Náº¿u 2 nhÃ³m Ä‘áº·t cÃ¹ng Ä‘iá»ƒm cho cÃ¹ng 1 chá»§ Ä‘á»: nhÃ³m cÃ²n nhiá»u Ä‘iá»ƒm tá»•ng hÆ¡n tháº¯ng
+NhÃ³m tháº¯ng bá»‹ trá»« sá»‘ Ä‘iá»ƒm Ä‘Ã£ Ä‘áº·t, nháº­n chá»§ Ä‘á» vÃ  khÃ´ng tham gia vÃ²ng sau
+Náº¿u nhiá»u nhÃ³m cÃ¹ng Ä‘áº·t giÃ¡ cao cho cÃ¡c chá»§ Ä‘á» khÃ¡c nhau: xá»­ lÃ½ tá»«ng chá»§ Ä‘á» Ä‘á»™c láº­p
+Quy táº¯c nhiá»u vÃ²ng
+Sá»‘ vÃ²ng tá»‘i Ä‘a
+5 vÃ²ng Ä‘áº¥u giÃ¡
+Chá»§ Ä‘á» Ä‘Ã£ cÃ³ nhÃ³m
+Bá»‹ loáº¡i khá»i danh sÃ¡ch, nhÃ³m win khÃ´ng tham gia vÃ²ng sau
+VÃ²ng tiáº¿p theo
+Chá»‰ cÃ¡c nhÃ³m chÆ°a cÃ³ chá»§ Ä‘á» tiáº¿p tá»¥c Ä‘áº¥u giÃ¡ cÃ¡c chá»§ Ä‘á» cÃ²n láº¡i
+Sau 5 vÃ²ng (VÃ²ng 6)
+CÃ¡c chá»§ Ä‘á» cÃ²n láº¡i Ä‘Æ°á»£c random cho cÃ¡c nhÃ³m chÆ°a cÃ³ â€” tá»± Ä‘á»™ng
+NhÃ³m khÃ´ng win sau 5 vÃ²ng
+Bá»‹ trá»« Ä‘iá»ƒm theo quy Ä‘á»‹nh GV cÃ i Ä‘áº·t (máº·c Ä‘á»‹nh: -30 Ä‘iá»ƒm)
+NhÃ³m khÃ´ng tham gia Ä‘áº¥u giÃ¡
+Bá»‹ trá»« Ä‘iá»ƒm nhÆ° trÃªn náº¿u Ä‘áº¿n háº¿t vÃ²ng 5 váº«n chÆ°a cÃ³ chá»§ Ä‘á»
+Káº¿t quáº£ cuá»‘i vÃ  thÆ°á»Ÿng Ä‘iá»ƒm
+Sau khi táº¥t cáº£ nhÃ³m cÃ³ chá»§ Ä‘á» (hoáº·c sau vÃ²ng 6), há»‡ thá»‘ng tá»•ng káº¿t
+NhÃ³m cÃ³ nhiá»u Ä‘iá»ƒm dÆ° nháº¥t (sau khi trá»« Ä‘áº·t cÆ°á»£c) nháº­n thÆ°á»Ÿng +0.5 Ä‘iá»ƒm trong báº£ng Ä‘iá»ƒm GV
+Káº¿t quáº£ hiá»ƒn thá»‹: tÃªn nhÃ³m, chá»§ Ä‘á», Ä‘iá»ƒm ban Ä‘áº§u, Ä‘iá»ƒm Ä‘Ã£ chi, Ä‘iá»ƒm cÃ²n láº¡i
+GV xÃ¡c nháº­n káº¿t quáº£ â†’ lÆ°u vÃ o há»‡ thá»‘ng
+â†’  GV cáº§n cÃ³ quyá»n Ä‘iá»u chá»‰nh thÆ°á»Ÿng Ä‘iá»ƒm trÆ°á»›c khi xÃ¡c nháº­n lÆ°u
+4. Kiá»ƒu 2 â€” Tá»± chá»n phÃ²ng chá»§ Ä‘á»
+SV tá»± do chá»n chá»§ Ä‘á» vÃ  nhÃ³m láº¡i vá»›i nhau trong phÃ²ng chá»§ Ä‘á» tÆ°Æ¡ng á»©ng. KhÃ´ng cÃ³ yáº¿u tá»‘ Ä‘iá»ƒm sá»‘.
+4.1 Giao diá»‡n chÃ­nh â€” Danh sÃ¡ch chá»§ Ä‘á»
+Hiá»ƒn thá»‹ táº¥t cáº£ chá»§ Ä‘á» dáº¡ng lÆ°á»›i: 4 cá»™t Ã— N hÃ ng (responsive)
+Má»—i Ã´ hiá»ƒn thá»‹: tÃªn chá»§ Ä‘á», sá»‘ SV hiá»‡n Ä‘ang trong phÃ²ng, tráº¡ng thÃ¡i (Má»Ÿ / Äá»§ ngÆ°á»i / ÄÃ£ khoÃ¡)
+Click vÃ o Ã´ â†’ xem chi tiáº¿t chá»§ Ä‘á»
+MÃ n hÃ¬nh chi tiáº¿t: mÃ´ táº£ chá»§ Ä‘á» (náº¿u cÃ³) + nÃºt "Chá»n" vÃ  "Quay láº¡i"
+4.2 PhÃ²ng chá»§ Ä‘á»
+Khi SV vÃ o phÃ²ng
+Tháº¥y danh sÃ¡ch thÃ nh viÃªn Ä‘ang trong phÃ²ng
+Tháº¥y sá»‘ nhÃ³m 2 TV vÃ  nhÃ³m 3 TV cÃ²n láº¡i (chÆ°a Ä‘Æ°á»£c chá»‘t bá»Ÿi phÃ²ng khÃ¡c)
+Ã” chat realtime vá»›i cÃ¡c thÃ nh viÃªn hiá»‡n cÃ³ trong phÃ²ng
+NÃºt "Quay láº¡i" â€” cÃ²n cÃ³ thá»ƒ chá»n láº¡i chá»§ Ä‘á» khÃ¡c
+Giá»›i háº¡n vÃ  khoÃ¡ phÃ²ng
+Má»—i phÃ²ng tá»‘i Ä‘a 3 ngÆ°á»i
+Khi Ä‘á»§ 3 ngÆ°á»i: phÃ²ng táº¡m khoÃ¡, khÃ´ng cho thÃªm ngÆ°á»i vÃ o
+SV trong phÃ²ng cÃ³ thá»ƒ rá»i Ä‘i â†’ phÃ²ng tá»± má»Ÿ láº¡i
+Chá»‘t nhÃ³m
+Khi táº¥t cáº£ thÃ nh viÃªn Ä‘á»“ng Ã½: báº¥m nÃºt "Chá»‘t nhÃ³m"
+Cáº§n tick Ä‘á»“ng Ã½ cá»§a táº¥t cáº£ thÃ nh viÃªn trong phÃ²ng
+Khi Ä‘á»§ Ä‘á»“ng Ã½: nhÃ³m Ä‘Æ°á»£c chá»‘t, phÃ²ng khoÃ¡ vÄ©nh viá»…n
+Sá»‘ nhÃ³m 2 TV hoáº·c 3 TV cÃ²n láº¡i trÃªn toÃ n phiÃªn tá»± giáº£m
+âš   Há»‡ thá»‘ng cáº§n kiá»ƒm tra sá»‘ lÆ°á»£ng nhÃ³m 2 TV vÃ  3 TV cÃ²n láº¡i trÆ°á»›c khi cho chá»‘t. VÃ­ dá»¥: náº¿u háº¿t slot nhÃ³m 3 TV thÃ¬ phÃ²ng chá»‰ Ä‘Æ°á»£c chá»‘t khi cÃ³ Ä‘Ãºng 2 thÃ nh viÃªn.
+4.3 Káº¿t thÃºc phiÃªn
+PhiÃªn káº¿t thÃºc khi táº¥t cáº£ phÃ²ng chá»§ Ä‘á» Ä‘á»u Ä‘Ã£ chá»‘t nhÃ³m
+GV cÃ³ thá»ƒ xem tá»•ng káº¿t: chá»§ Ä‘á» â€” nhÃ³m â€” danh sÃ¡ch thÃ nh viÃªn
+GV xÃ¡c nháº­n lÆ°u káº¿t quáº£ vÃ o há»‡ thá»‘ng
+5. Kiá»ƒu 3 â€” Random hoÃ n toÃ n
+GV báº¥m 1 nÃºt, há»‡ thá»‘ng tá»± Ä‘á»™ng xá»­ lÃ½ toÃ n bá»™: ghÃ©p nhÃ³m ngáº«u nhiÃªn vÃ  gÃ¡n chá»§ Ä‘á» ngáº«u nhiÃªn. PhÃ¹ há»£p khi cáº§n nhanh gá»n.
+5.1 Luá»“ng xá»­ lÃ½
+GV xÃ¡c nháº­n cáº¥u hÃ¬nh (mÃ´n, lá»›p, danh sÃ¡ch chá»§ Ä‘á», sá»‘ nhÃ³m)
+GV báº¥m "Random ngay"
+Há»‡ thá»‘ng random ghÃ©p SV thÃ nh nhÃ³m (theo Ä‘Ãºng cáº¥u trÃºc sá»‘ nhÃ³m 2 TV vÃ  3 TV Ä‘Ã£ tÃ­nh)
+Há»‡ thá»‘ng random gÃ¡n má»—i chá»§ Ä‘á» cho 1 nhÃ³m
+Káº¿t quáº£ hiá»ƒn thá»‹ ngay: danh sÃ¡ch nhÃ³m + chá»§ Ä‘á» Ä‘Æ°á»£c gÃ¡n
+GV xem láº¡i, cÃ³ thá»ƒ báº¥m "Random láº¡i" hoáº·c "XÃ¡c nháº­n lÆ°u"
+5.2 Giao diá»‡n káº¿t quáº£
+Báº£ng káº¿t quáº£: STT nhÃ³m | Chá»§ Ä‘á» | Danh sÃ¡ch thÃ nh viÃªn
+NÃºt "Random láº¡i" â€” random toÃ n bá»™ tá»« Ä‘áº§u
+NÃºt "XÃ¡c nháº­n" â€” lÆ°u káº¿t quáº£ vÃ o há»‡ thá»‘ng
+SV xem káº¿t quáº£ ngay trÃªn giao diá»‡n sau khi GV xÃ¡c nháº­n
+6. Giao diá»‡n Ä‘iá»u hÃ nh â€” Giáº£ng viÃªn
+Trong suá»‘t phiÃªn, GV cÃ³ mÃ n hÃ¬nh Ä‘iá»u hÃ nh riÃªng vá»›i cÃ¡c thÃ´ng tin vÃ  nÃºt Ä‘iá»u khiá»ƒn:
+6.1 ThÃ´ng tin theo dÃµi realtime
+Sá»‘ SV Ä‘Ã£ Ä‘Äƒng nháº­p / tá»•ng SV lá»›p
+Sá»‘ nhÃ³m Ä‘Ã£ hÃ¬nh thÃ nh / tá»•ng sá»‘ nhÃ³m cáº§n cÃ³
+Tráº¡ng thÃ¡i tá»«ng nhÃ³m (Ä‘ang chat / Ä‘Ã£ ná»™p / chÆ°a ná»™p â€” vá»›i Kiá»ƒu 1)
+Äá»“ng há»“ Ä‘áº¿m ngÆ°á»£c vÃ²ng hiá»‡n táº¡i
+Sá»‘ chá»§ Ä‘á» Ä‘Ã£ Ä‘Æ°á»£c phÃ¢n / tá»•ng sá»‘ chá»§ Ä‘á»
+6.2 CÃ¡c nÃºt Ä‘iá»u khiá»ƒn
+Báº¯t Ä‘áº§u vÃ²ng báº¯t nhÃ³m
+KÃ­ch hoáº¡t VÃ²ng 1 (Kiá»ƒu 1)
+Chuyá»ƒn sang lÆ°á»£t nhÃ³m 3 TV
+Khi Ä‘iá»u kiá»‡n thá»a â€” Kiá»ƒu 1
+Random SV cÃ²n láº¡i
+Xá»­ lÃ½ SV chÆ°a cÃ³ nhÃ³m â€” Kiá»ƒu 1
+Báº¯t Ä‘áº§u vÃ²ng Ä‘áº¥u giÃ¡
+KÃ­ch hoáº¡t VÃ²ng 2 (Kiá»ƒu 1)
+CÃ´ng bá»‘ káº¿t quáº£
+Reveal káº¿t quáº£ vÃ²ng Ä‘áº¥u giÃ¡ sá»›m náº¿u táº¥t cáº£ Ä‘Ã£ ná»™p
+Káº¿t thÃºc phiÃªn
+ÄÃ³ng phiÃªn, lÆ°u káº¿t quáº£
+Random ngay
+ToÃ n bá»™ random â€” Kiá»ƒu 3
+7. YÃªu cáº§u ká»¹ thuáº­t
+7.1 Realtime
+WebSocket hoáº·c Server-Sent Events cho: danh sÃ¡ch SV online, tráº¡ng thÃ¡i ghÃ©p nhÃ³m, chat nhÃ³m, Ä‘á»“ng há»“ Ä‘áº¿m ngÆ°á»£c, káº¿t quáº£ Ä‘áº¥u giÃ¡
+Äá»™ trá»… tá»‘i Ä‘a cháº¥p nháº­n Ä‘Æ°á»£c: < 500ms
+7.2 Database â€” CÃ¡c entity bá»• sung
+TopicSession
+id, class_id, subject_id, topics[], group_structure (n2/n3), type (1/2/3), score_column, status, created_at
+SessionGroup
+id, session_id, members[], topic_id, total_points, remaining_points, status
+WaveRequest
+id, session_id, from_student, to_student, status (pending/accepted/rejected)
+BidRecord
+id, session_id, group_id, topic_id, bid_points, round, submitted_at
+GroupChat
+id, session_id, group_id, messages[] (sender, content, timestamp)
+7.3 Xá»­ lÃ½ edge cases
+SV máº¥t káº¿t ná»‘i giá»¯a chá»«ng: giá»¯ tráº¡ng thÃ¡i, hiá»ƒn thá»‹ "offline" trong danh sÃ¡ch
+GV máº¥t káº¿t ná»‘i: phiÃªn váº«n tiáº¿p tá»¥c, GV reconnect vÃ o láº¡i Ä‘Æ°á»£c
+Háº¿t giá» mÃ  chÆ°a Ä‘á»§ nhÃ³m ná»™p (Kiá»ƒu 1): tá»± cÃ´ng bá»‘ vá»›i cÃ¡c nhÃ³m Ä‘Ã£ ná»™p
+Slot nhÃ³m 2 TV / 3 TV Ä‘áº§y: UI tá»± disable cÃ¡c nÃºt liÃªn quan, hiá»‡n thÃ´ng bÃ¡o
+2 nhÃ³m submit cÃ¹ng lÃºc cho cÃ¹ng 1 chá»§ Ä‘á» cÃ¹ng Ä‘iá»ƒm: so Ä‘iá»ƒm tá»•ng cÃ²n láº¡i, náº¿u váº«n báº±ng thÃ¬ random
+7.4 Responsive & Hiá»ƒn thá»‹
+Giao diá»‡n SV tá»‘i Æ°u cho Ä‘iá»‡n thoáº¡i (layout 50/50 chuyá»ƒn sang dá»c trÃªn mobile)
+Giao diá»‡n GV tá»‘i Æ°u cho mÃ n hÃ¬nh lá»›n (mÃ¡y tÃ­nh, mÃ n hÃ¬nh chiáº¿u)
+Danh sÃ¡ch chá»§ Ä‘á» Kiá»ƒu 2: 4 cá»™t trÃªn desktop, 2 cá»™t trÃªn tablet, 1 cá»™t trÃªn mobile
+8. TÃ³m táº¯t so sÃ¡nh 3 kiá»ƒu
+TiÃªu chÃ­
+Kiá»ƒu 1 â€” Äáº¥u giÃ¡
+Kiá»ƒu 2 â€” Tá»± chá»n
+Kiá»ƒu 3 â€” Random
+Thá»i gian
+~30-60 phÃºt
+~15-30 phÃºt
+< 1 phÃºt
+Yáº¿u tá»‘ chiáº¿n lÆ°á»£c
+Cao
+Trung bÃ¬nh
+KhÃ´ng
+Cáº§n Ä‘iá»ƒm sá»‘
+CÃ³
+KhÃ´ng
+KhÃ´ng
+TÆ°Æ¡ng tÃ¡c SV
+Cao (chat, wave)
+Trung bÃ¬nh (chat)
+KhÃ´ng
+Äá»™ phá»©c táº¡p ká»¹ thuáº­t
+Cao
+Trung bÃ¬nh
+Tháº¥p
+PhÃ¹ há»£p khi
+Muá»‘n táº¡o khÃ´ng khÃ­, gamification
+Muá»‘n SV tá»± quyáº¿t Ä‘á»‹nh
+Cáº§n nhanh, tiáº¿t kiá»‡m thá»i gian
+â€” Háº¿t tÃ i liá»‡u â€”
